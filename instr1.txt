@@ -1,0 +1,31 @@
+exemplo 1:
+x=y+1;
+
+LDA x   mkInstr(LDA,...) append
+LOD y   compileExpr append
+LDC 1
+ADI
+STO    mkInstr(STO,0);
+
+exemplo 2:
+2*a+(b-3)
+
+LDC 2
+LOD a
+MPI
+LOD b
+LDC 3
+SBI
+ADI
+
+exemplo 3:
+LAB l1
+++
+compileExpr(E)
+++
+FJP l2
+++
+compileCmdList(S)
+++
+UJP L1
+LAB l2
