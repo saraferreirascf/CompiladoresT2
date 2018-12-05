@@ -18,3 +18,17 @@ Expr* ast_operation(int operator, Expr* left, Expr* right) {
   node->attr.op.right = right;
   return node;
 }
+BoolExpr* ast_boolean(int v){
+  BoolExpr* node=(BoolExpr*) malloc(sizeof(BoolExpr));
+  node->kind= VALOR;
+  node->attr.value=v;
+  return node;
+}
+BoolExpr* ast_booleanop(int operator,BoolExpr* left, BoolExpr* right){
+  BoolExpr* node=(BoolExpr*) malloc(sizeof(BoolExpr));
+  node->kind= COMPARA;
+  node->attr.comp.operator= operator;
+  node->attr.comp.left=left;
+  node->attr.comp.right=right;
+  return node;
+}

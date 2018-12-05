@@ -1,4 +1,4 @@
-typedef enum {LDC,ADI,SBI,MPI,DVI,LOD,STO,RDI,FJP,GRT,WRI,UJP,LABEL,EQU,NEQ,LDA} IKind;
+typedef enum {LDC,ADI,SBI,MPI,DVI,DIF,LES,LEQ,EQU,LOD,GEQ,STO,RDI,FJP,GRT,WRI,UJP,LABEL,NEQ,LDA} IKind;
 
 typedef struct {
   IKind kind;

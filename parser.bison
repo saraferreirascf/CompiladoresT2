@@ -9,7 +9,7 @@ MOD
 EQUAL
 DIFF
 LESS
-GREATER
+GREATER //nao ha no opcode
 LESSEQ
 GREATEREQ
 
@@ -26,11 +26,13 @@ GREATEREQ
 %union {
 int intValue;
 Expr* exprValue;
+BoolExpr* boolValue;
 
 }
 
 %type <intValue> INT
-%type <exprValue> expr
+//%type <exprValue> expr
+%type <boolValue> bool
 
 
 // Use "%code requires" to make declarations go
@@ -45,43 +47,80 @@ extern int yyline;
 extern char* yytext;
 extern FILE* yyin;
 extern void yyerror(const char* msg);
-Expr* root;
+BoolExpr* root;
 }
 
 %%
-program: expr { root=$1; }
+program: bool { root=$1; }
 
 
-expr:
+//expr:
+//INT {
+//$$ = ast_integer($1);
+//}
+//;
+//|
+//expr PLUS expr {
+//$$ = ast_operation(PLUS, $1, $3);
+//}
+//;
+//|
+//expr MINUS expr {
+//$$ = ast_operation(MINUS, $1, $3);
+//}
+//;
+//|
+//expr MULT expr {
+//$$ = ast_operation(MULT, $1, $3);
+//}
+//;
+//|
+//expr DIV expr{
+//$$ = ast_operation(DIV, $1, $3);
+//}
+//;
+//|
+//expr MOD expr {
+//$$ = ast_operation(MOD, $1, $3);
+//}
+//;
+
+bool:
 INT {
-$$ = ast_integer($1);
+$$ = ast_boolean($1);
 }
 ;
 |
-expr PLUS expr {
-$$ = ast_operation(PLUS, $1, $3);
+bool EQUAL bool {
+$$ = ast_booleanop(EQUAL,$1, $3);
 }
 ;
 |
-expr MINUS expr {
-$$ = ast_operation(MINUS, $1, $3);
+bool DIFF bool {
+$$ = ast_booleanop(DIFF,$1, $3);
 }
 ;
 |
-expr MULT expr {
-$$ = ast_operation(MULT, $1, $3);
+bool LESS bool {
+$$ = ast_booleanop(LESS,$1, $3);
 }
 ;
 |
-expr DIV expr{
-$$ = ast_operation(DIV, $1, $3);
+bool GREATER bool {
+$$ = ast_booleanop(GREATER,$1, $3);
 }
 ;
 |
-expr MOD expr {
-$$ = ast_operation(MOD, $1, $3);
+bool LESSEQ bool {
+$$ = ast_booleanop(LESSEQ,$1, $3);
 }
 ;
+|
+bool GREATEREQ bool {
+$$ = ast_booleanop(GREATEREQ,$1,$3);
+}
+;
+
 %%
 
 void yyerror(const char* err) {

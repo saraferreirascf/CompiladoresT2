@@ -23,5 +23,11 @@ int yyline = 1;
 "*" { return MULT; }
 "/" { return DIV; }
 "%" { return MOD;}
+"==" {return EQUAL;}
+"!=" {return DIFF;}
+"<" {return LESS;}
+">" {return GREATER;}
+"<=" {return LESSEQ;}
+">=" {return GREATEREQ;}
 .  { yyerror("unexpected character"); }
 %%

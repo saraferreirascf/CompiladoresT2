@@ -28,8 +28,8 @@ struct _BoolExpr{
     int value; // for integer values
     struct {
       int operator; // PLUS, MINUS, etc
-      struct _Expr* left;
-      struct _Expr* right;
+      struct _BoolExpr* left;
+      struct _BoolExpr* right;
     } comp; // for binary expressions
   } attr;
 };
@@ -41,6 +41,7 @@ typedef struct _BoolExpr BoolExpr;
 // Constructor functions (see implementation in ast.c)
 Expr* ast_integer(int v);
 Expr* ast_operation(int operator, Expr* left, Expr* right);
-
+BoolExpr* ast_boolean(int v);
+BoolExpr* ast_booleanop(int operator,BoolExpr* left, BoolExpr* right);
 
 #endif

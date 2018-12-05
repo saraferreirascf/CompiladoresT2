@@ -48,6 +48,21 @@ void printInstr(Instr* inst){
     case MPI:
     printf("MPI");
     break;
+    case EQU:
+    printf("EQU");
+    break;
+    case DIF:
+    printf("DIF");
+    break;
+    case LES:
+    printf("LES");
+    break;
+    case LEQ:
+    printf("LEQ");
+    break;
+    case GEQ:
+    printf("GEQ");
+    break;
     default: printf("Não existe\n");
   }
 
@@ -95,25 +110,31 @@ lista_Instr* compileExpr(Expr* e){
 
 lista_Instr* compileBool(BoolExpr* b){
   lista_Instr* l1 = (lista_Instr*) malloc(sizeof(lista_Instr));
-  switch(e->kind){
+  switch(b->kind){
     case E_INTEGER:
-    l1 = mkList(mkInstr(LDC,e->attr.value), NULL);
+    l1 = mkList(mkInstr(LDC,b->attr.value), NULL);
     break;
     case E_OPERATION:
-    l1 = compileBool(e->attr.op.left);
-    l1 = append(l1, compileBool(e->attr.op.right));
-    switch(e->attr.op.operator){
-      case PLUS:
-      l1 = append(l1, mkList(mkInstr(ADI, 0), NULL));
+    l1 = compileBool(b->attr.comp.left);
+    l1 = append(l1, compileBool(b->attr.comp.right));
+    switch(b->attr.comp.operator){
+      case EQUAL:
+      l1 = append(l1, mkList(mkInstr(EQU, 0), NULL));//EQUc
       break;
-      case MINUS:
-      l1 = append(l1, mkList(mkInstr(SBI, 0), NULL));
+      case DIFF:
+      l1 = append(l1, mkList(mkInstr(DIF, 0), NULL));
       break;
-      case MULT:
-      l1 = append(l1, mkList(mkInstr(MPI, 0), NULL));
+      case LESS:
+      l1 = append(l1, mkList(mkInstr(LES, 0), NULL));
       break;
-      case DIV:
+      case LESSEQ:
+      l1 = append(l1, mkList(mkInstr(LEQ, 0), NULL));
+      break;
+    /*  case GREATER:
       l1 = append(l1, mkList(mkInstr(DVI, 0), NULL));
+      break;*/
+      case GREATEREQ:
+      l1 = append(l1, mkList(mkInstr(GEQ, 0), NULL));
       break;
     }
   }
@@ -138,7 +159,7 @@ int main(int argc, char** argv) {
     }
   }
   if(yyparse()==0){
-    lista_Instr* l=compileExpr(root);
+    lista_Instr* l=compileBool(root);
     printListIntrs(l); //numa proxima fase este print vai gerar mips
   }
 
