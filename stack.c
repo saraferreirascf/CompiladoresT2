@@ -3,9 +3,13 @@
 #include "stack.h"
 #include "ast.h"
 #include "parser.h"
+
+int label; //Variavel global por causa dos ciclos
+
 Instr* mkInstr(IKind kind, int n){
   Instr* node = (Instr*) malloc(sizeof(Instr));
   node->kind=kind;
+  //  node->args.arg=n; //o que é preciso fazer para mudar para a union
   node->arg=n;
 
   return node;
@@ -29,10 +33,10 @@ lista_Instr* tail(lista_Instr* l1){
 lista_Instr* append(lista_Instr* l1, lista_Instr* l2){
   if(l1==NULL)
   return l2;
-  else{
-    return mkList(head(l1),append(tail(l1),l2));
-  }
+  return mkList(head(l1),append(tail(l1),l2));
 }
+
+
 
 void printInstr(Instr* inst){
   switch(inst->kind){
@@ -47,6 +51,9 @@ void printInstr(Instr* inst){
     break;
     case MPI:
     printf("MPI");
+    break;
+    case MODP:
+    printf("MODP");
     break;
     case EQU:
     printf("EQU");
@@ -63,10 +70,13 @@ void printInstr(Instr* inst){
     case GEQ:
     printf("GEQ");
     break;
+    case GRT:
+    printf("GRT");
+    break;
     default: printf("Não existe\n");
   }
 
-  printf("%d\n", inst->arg);
+  printf(" %d\n", inst->arg);
 
 }
 
@@ -78,6 +88,7 @@ void printListIntrs(lista_Instr* l1){
     printListIntrs(tail(l1));
   }
 }
+
 
 lista_Instr* compileExpr(Expr* e){
   lista_Instr* l1 = (lista_Instr*) malloc(sizeof(lista_Instr));
@@ -101,6 +112,9 @@ lista_Instr* compileExpr(Expr* e){
       break;
       case DIV:
       l1 = append(l1, mkList(mkInstr(DVI, 0), NULL));
+      break;
+      case MOD:
+      l1 = append(l1, mkList(mkInstr(MODP, 0), NULL));
       break;
     }
   }
@@ -130,9 +144,9 @@ lista_Instr* compileBool(BoolExpr* b){
       case LESSEQ:
       l1 = append(l1, mkList(mkInstr(LEQ, 0), NULL));
       break;
-    /*  case GREATER:
-      l1 = append(l1, mkList(mkInstr(DVI, 0), NULL));
-      break;*/
+      case GREATER:
+      l1 = append(l1, mkList(mkInstr(GRT, 0), NULL));
+      break;
       case GREATEREQ:
       l1 = append(l1, mkList(mkInstr(GEQ, 0), NULL));
       break;
@@ -141,13 +155,8 @@ lista_Instr* compileBool(BoolExpr* b){
 
   return l1;
 }
-/*
-lista_Instr* compileCmd(Cmd* c){
 
-}
-lista_Instr* compile(lcmd* l){
 
-}*/
 
 int main(int argc, char** argv) {
   --argc;++argv;
@@ -161,6 +170,7 @@ int main(int argc, char** argv) {
   if(yyparse()==0){
     lista_Instr* l=compileBool(root);
     printListIntrs(l); //numa proxima fase este print vai gerar mips
+    //FAzer print do syscall
   }
 
 

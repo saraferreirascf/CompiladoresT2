@@ -14,10 +14,17 @@ int yyline = 1;
 #.*\n { yyline++; }
 \n { yyline++; }
 
-\-?[0-9]+ {
-   yylval.intValue = atoi(yytext);
-   return INT;
+\"(\\.|[^\\"])*\" {
+yylval.textValue = strdup(yytext);
+return STR;
 }
+
+[0-9]+ {
+yylval.intValue = atoi(yytext);
+return INT;
+}
+
+
 "+" { return PLUS; }
 "-" { return MINUS; }
 "*" { return MULT; }
@@ -29,5 +36,29 @@ int yyline = 1;
 ">" {return GREATER;}
 "<=" {return LESSEQ;}
 ">=" {return GREATEREQ;}
+"while" {return CICLO;}
+"if" {return SE;}
+"else" {return ELSE;}
+"=" { return IGUAL;}
+";" {return PV;}
+"{" {return CHESQ;}
+"}" {return CHDIR;}
+"(" {return PESQ;}
+")" {return PDIR;}
+"scanf" {return SCANF;}
+"printf" {return PRINTF;}
+"int" {return INTEIRO;}
+"main" {return MAIN;}
+"," {return VIRGULA;}
+"true" {return TRUE;}
+"false" {return FALSE;}
+"return" { return RETURN;}
+
+
+[a-zA-Z_][a-zA-Z0-9_]* {
+yylval.textValue = strdup(yytext);
+return VAR;
+}
+
 .  { yyerror("unexpected character"); }
 %%

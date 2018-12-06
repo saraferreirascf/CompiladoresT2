@@ -1,0 +1,41 @@
+-Alguns ficheiros passaram a ser os do trabalho1, só fizemos aqueles p testar.
+-Usar o union args do stack.h (mudar o que for preciso para isso nas já feitas);
+Abrir o ficheiro printAbsTree do trabalho 1,o compile Expr ja feito para o resto as funções sao mt parecidas:
+-Compile_atributo;
+(compile expr;
+mkintr STO, var do atr
+return l1 )
+
+-Compile_declaração; (int i)
+-Compile_se;
+
+label_temp=label;
+compileBool (condição do ciclo)
+mkinstr FJP 1 (adicionar tbm o FJP a printInstr)
+compile lcmd para comandos (lcmd da estrutura do se no ast.h)
+mkinstr UJP 2 (adicionar tbm o UJP a printInstr)
+label_temp=1;
+compile lcmd para ncomandos (lcmd da estrutura do se no ast.h)
+label_temp+=1;
+label+=2; //quando passar para a proxima função nao vai usar os mesmos valores
+
+-Compile_ciclo;
+
+label_temp=label;
+label_temp=1;
+compileBool
+FJP 2
+compile lcmd list
+UJP 1
+label_temp+=1;
+label+=2;
+
+-Compile_print;
+percorrer a lista lvar_print para cada variavel mkinstr WRI (adicionar tbm WRI a printInstr)
+-Compile_scan;
+SCAN igual ao print mas com RDI(adicionar tbm RDI ao printInstr)
+-Compile cmd (switch com kind de comando e redireciona para as funções de cima);
+-Compile lcmd(igual á do trabalho1);
+-Mudar na main para ser compile lcmd;
+-Testar para ver se ta a dar o p-code com o tester.c (nao dá p imprimir strings em p-code)
+P-CODE feitooooooooooooooooooo.

@@ -1,7 +1,11 @@
-typedef enum {LDC,ADI,SBI,MPI,DVI,DIF,LES,LEQ,EQU,LOD,GEQ,STO,RDI,FJP,GRT,WRI,UJP,LABEL,NEQ,LDA} IKind;
+typedef enum {LDC,ADI,SBI,MPI,DVI,MODP,DIF,LES,LEQ,EQU,LOD,GEQ,STO,RDI,FJP,GRT,WRI,UJP,LABEL,NEQ} IKind;
 
 typedef struct {
   IKind kind;
+/*  union { //só tem um dos campos ativos, é preciso mudar as funções no stack.c para incluir o var, var preciso p scan
+    char* var;
+    int arg;
+  } args;*/
   int arg;
 } Instr;
 
