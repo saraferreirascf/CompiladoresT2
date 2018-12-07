@@ -2,11 +2,10 @@ typedef enum {LDC,ADI,SBI,MPI,DVI,MODP,DIF,LES,LEQ,EQU,LOD,GEQ,STO,RDI,FJP,GRT,W
 
 typedef struct {
   IKind kind;
-/*  union { //só tem um dos campos ativos, é preciso mudar as funções no stack.c para incluir o var, var preciso p scan
+  union { //só tem um dos campos ativos, é preciso mudar as funções no stack.c para incluir o var, var preciso p scan
     char* var;
     int arg;
-  } args;*/
-  int arg;
+  } args;
 } Instr;
 
 typedef struct _li {

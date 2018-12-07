@@ -9,9 +9,7 @@ int label; //Variavel global por causa dos ciclos
 Instr* mkInstr(IKind kind, int n){
   Instr* node = (Instr*) malloc(sizeof(Instr));
   node->kind=kind;
-  //  node->args.arg=n; //o que é preciso fazer para mudar para a union
-  node->arg=n;
-
+  node->args.arg=n;
   return node;
 }
 
@@ -35,8 +33,6 @@ lista_Instr* append(lista_Instr* l1, lista_Instr* l2){
   return l2;
   return mkList(head(l1),append(tail(l1),l2));
 }
-
-
 
 void printInstr(Instr* inst){
   switch(inst->kind){
@@ -73,10 +69,19 @@ void printInstr(Instr* inst){
     case GRT:
     printf("GRT");
     break;
+    case STO:
+    printf("STO");
+    break;
+    case FJP:
+    printf("FJP");
+    break;
+    case UJP;
+    printf("UJP");
+    break;
+    
     default: printf("Não existe\n");
   }
-
-  printf(" %d\n", inst->arg);
+  printf(" %d\n", inst->args.arg);
 
 }
 
@@ -156,7 +161,34 @@ lista_Instr* compileBool(BoolExpr* b){
   return l1;
 }
 
+lista_Instr* compile_attr(atributo* a) {
+  lista_Instr* l1 = NULL;
+  compileExpr(a->value);
+  l1 = append(l1, mkList(mkInstr(STO, 0), NULL));
+  return l1;
+}
 
+lista_Instr* compile_se(se* se) {
+  int label_temp = label;
+  lista_Instr* l1 = NULL;
+  compileBool(se->cond);
+  l1 = append(l1, mkList(mkInstr(FJP, 1), NULL));
+  compile_lcmd(se->comandos);
+  l1 = append(l1, mkList(mkInstr(UJP, 2), NULL));
+  label_temp = 1;
+  compile_lcmd(se->ncomandos);
+  label_temp+= 1;
+  label+= 2;
+}
+
+lista_Instr* compile_lcmd(lcmd* l){
+  //criar uma lista nova e fazer append cm a lista q da no compile cmd e retornar
+  while(l!=NULL){
+    compileCmd(l->comando);
+    l=l->next;
+  }
+  return;
+}
 
 int main(int argc, char** argv) {
   --argc;++argv;
@@ -168,9 +200,10 @@ int main(int argc, char** argv) {
     }
   }
   if(yyparse()==0){
-    lista_Instr* l=compileBool(root);
+    lista_Instr* l=compile_lcmd(root);
     printListIntrs(l); //numa proxima fase este print vai gerar mips
     //FAzer print do syscall
+
   }
 
 
