@@ -40,7 +40,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 40 "parser.bison" /* yacc.c:1909  */
+#line 87 "parser.bison" /* yacc.c:1909  */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,7 +51,7 @@ extern int yyline;
 extern char* yytext;
 extern FILE* yyin;
 extern void yyerror(const char* msg);
-BoolExpr* root;
+lcmd* root;
 
 #line 57 "parser.h" /* yacc.c:1909  */
 
@@ -61,17 +61,38 @@ BoolExpr* root;
   enum yytokentype
   {
     INT = 258,
-    PLUS = 259,
-    MINUS = 260,
-    MULT = 261,
-    DIV = 262,
-    MOD = 263,
-    EQUAL = 264,
-    DIFF = 265,
-    LESS = 266,
-    GREATER = 267,
-    LESSEQ = 268,
-    GREATEREQ = 269
+    STR = 259,
+    VAR = 260,
+    PLUS = 261,
+    MINUS = 262,
+    MULT = 263,
+    DIV = 264,
+    MOD = 265,
+    EQUAL = 266,
+    DIFF = 267,
+    LESS = 268,
+    GREATER = 269,
+    LESSEQ = 270,
+    GREATEREQ = 271,
+    CICLO = 272,
+    FAZ = 273,
+    IGUAL = 274,
+    SE = 275,
+    ELSE = 276,
+    PV = 277,
+    CHESQ = 278,
+    CHDIR = 279,
+    PESQ = 280,
+    PDIR = 281,
+    SCANF = 282,
+    PRINTF = 283,
+    INTEIRO = 284,
+    MAIN = 285,
+    VIRGULA = 286,
+    TRUE = 287,
+    FALSE = 288,
+    RETURN = 289,
+    WHILE = 290
   };
 #endif
 
@@ -80,14 +101,24 @@ BoolExpr* root;
 
 union YYSTYPE
 {
-#line 26 "parser.bison" /* yacc.c:1909  */
+#line 47 "parser.bison" /* yacc.c:1909  */
 
 int intValue;
 Expr* exprValue;
 BoolExpr* boolValue;
+Cmd* commandValue;
+char* textValue;
+lcmd* lcmdValue;
+lvar_d* lvarValue;
+lvar_print* lvarprintValue;
+decl* declValue;
+atributo* atrValue;
+se* ifValue;
+ciclo* cicloValue;
+print* printValue;
+scan* scanValue;
 
-
-#line 91 "parser.h" /* yacc.c:1909  */
+#line 122 "parser.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

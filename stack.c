@@ -6,6 +6,17 @@
 
 int label; //Variavel global por causa dos ciclos
 
+lista_Instr* compile_lcmd(lcmd* l);
+lista_Instr* compileBool(BoolExpr* expr);
+lista_Instr* compileCmd(Cmd* c);
+lista_Instr* compileExpr(Expr* expr);
+lista_Instr* compile_attr(atributo* a);
+lista_Instr* compile_ciclo(ciclo* c);
+lista_Instr* compile_decl(decl* dl);
+lista_Instr* compile_print(print* p);
+lista_Instr* compile_scan(scan* s);
+lista_Instr* compile_se(se* se);
+
 Instr* mkInstr(IKind kind, int n){
   Instr* node = (Instr*) malloc(sizeof(Instr));
   node->kind=kind;
@@ -75,10 +86,16 @@ void printInstr(Instr* inst){
     case FJP:
     printf("FJP");
     break;
-    case UJP;
+    case UJP:
     printf("UJP");
     break;
-    
+    case WRI:
+    printf("WRI");
+    break;
+    case RDI:
+    printf("RDI");
+    break;
+
     default: printf("Não existe\n");
   }
   printf(" %d\n", inst->args.arg);
@@ -134,8 +151,8 @@ lista_Instr* compileBool(BoolExpr* b){
     l1 = mkList(mkInstr(LDC,b->attr.value), NULL);
     break;
     case E_OPERATION:
-    l1 = compileBool(b->attr.comp.left);
-    l1 = append(l1, compileBool(b->attr.comp.right));
+    l1 = compileExpr(b->attr.comp.left);
+    l1 = append(l1, compileExpr(b->attr.comp.right));
     switch(b->attr.comp.operator){
       case EQUAL:
       l1 = append(l1, mkList(mkInstr(EQU, 0), NULL));//EQUc
@@ -187,6 +204,71 @@ lista_Instr* compile_lcmd(lcmd* l){
     compileCmd(l->comando);
     l=l->next;
   }
+  return;
+}
+
+lista_Instr* compile_ciclo(ciclo* c) {
+  int label_temp = label;
+  lista_Instr* l1 = NULL;
+  label_temp = 1;
+  compileBool(c->cond);
+  l1 = append(l1, mkList(mkInstr(FJP, 2), NULL));
+  compile_lcmd(c->list);
+  l1 = append(l1, mkList(mkInstr(UJP, 1), NULL));
+  label_temp+= 1;
+  label+= 2;
+}
+
+lista_Instr* compile_print(print* p) {
+  printf("printf(");
+  printf("%s",p->str);
+  print_lvar_print(p->list);
+  printf(");\n");
+  return;
+}
+
+lista_Instr* compile_scan(scan* s) {
+  printf("scanf(");
+  printf("%s",s->str);
+  print_lvar_print(s->list);
+  printf(");\n");
+  return;
+}
+
+lista_Instr* compile_decl(decl* dl) {
+  if (dl == 0) {
+    yyerror("Null Decleration!!\n");
+    return;
+  }
+  printf("int ");
+  print_lvar_d(dl->list);
+
+  return;
+}
+
+lista_Instr* compileCmd(Cmd* c){
+  switch(c->kind){
+    case E_ATTR:
+    compile_attr(c->attr.a);
+    break;
+    case E_DECL:
+    compile_decl(c->attr.d);
+    break;
+    case E_IF:
+    compile_se(c->attr.se);
+    break;
+    case E_PRINT:
+    compile_print(c->attr.p);
+    break;
+    case E_SCAN:
+    compile_print(c->attr.s);
+    break;
+    case E_CICLO:
+    compile_ciclo(c->attr.c);
+    break;
+    default: yyerror("Unknown command!\n");
+  }
+  printf("\n");
   return;
 }
 
