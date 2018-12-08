@@ -24,6 +24,14 @@ Instr* mkInstr(IKind kind, int n){
   return node;
 }
 
+Instr* _mkInstr(IKind kind, char* c){
+  Instr* node = (Instr*) malloc(sizeof(Instr));
+  node->kind=kind;
+  node->args.var=c;
+  return node;
+}
+
+
 lista_Instr* mkList(Instr* code,  lista_Instr* l1){
   lista_Instr* node = (lista_Instr*) malloc(sizeof(lista_Instr));
   node->head=code;
@@ -95,6 +103,12 @@ void printInstr(Instr* inst){
     case RDI:
     printf("RDI");
     break;
+    case LDA:
+    printf("LDA");
+    break;
+    case LOD:
+    printf("LOD");
+    break;
 
     default: printf("Não existe\n");
   }
@@ -140,7 +154,6 @@ lista_Instr* compileExpr(Expr* e){
       break;
     }
   }
-
   return l1;
 }
 
@@ -155,7 +168,7 @@ lista_Instr* compileBool(BoolExpr* b){
     l1 = append(l1, compileExpr(b->attr.comp.right));
     switch(b->attr.comp.operator){
       case EQUAL:
-      l1 = append(l1, mkList(mkInstr(EQU, 0), NULL));//EQUc
+      l1 = append(l1, mkList(mkInstr(EQU, 0), NULL));
       break;
       case DIFF:
       l1 = append(l1, mkList(mkInstr(DIF, 0), NULL));
@@ -174,7 +187,6 @@ lista_Instr* compileBool(BoolExpr* b){
       break;
     }
   }
-
   return l1;
 }
 
@@ -196,15 +208,20 @@ lista_Instr* compile_se(se* se) {
   compile_lcmd(se->ncomandos);
   label_temp+= 1;
   label+= 2;
+
+  return l1;
 }
 
 lista_Instr* compile_lcmd(lcmd* l){
   //criar uma lista nova e fazer append cm a lista q da no compile cmd e retornar
+  lista_Instr* l1 = (lista_Instr*) malloc(sizeof(lista_Instr));
+  l1 = compileCmd(l->comando);
+
   while(l!=NULL){
-    compileCmd(l->comando);
+    l1 = append(l1, compileCmd(l->comando));
     l=l->next;
   }
-  return;
+  return l1;
 }
 
 lista_Instr* compile_ciclo(ciclo* c) {
@@ -220,56 +237,60 @@ lista_Instr* compile_ciclo(ciclo* c) {
 }
 
 lista_Instr* compile_print(print* p) {
-  printf("printf(");
-  printf("%s",p->str);
-  print_lvar_print(p->list);
-  printf(");\n");
-  return;
+  lista_Instr* l1 = (lista_Instr*) malloc(sizeof(lista_Instr));
+  lista_Instr* l2 = (lista_Instr*) malloc(sizeof(lista_Instr));
+  l1 = append(l1, mkList(_mkInstr(LOD, p->str), NULL));
+  l2 = append(l1, mkList(mkInstr(WRI, 0), NULL));
+  l1 = append(l1,l2);
+
+  return l1;
 }
 
 lista_Instr* compile_scan(scan* s) {
-  printf("scanf(");
-  printf("%s",s->str);
-  print_lvar_print(s->list);
-  printf(");\n");
-  return;
+  lista_Instr* l1 = (lista_Instr*) malloc(sizeof(lista_Instr));
+  lista_Instr* l2 = (lista_Instr*) malloc(sizeof(lista_Instr));
+  l1 = append(l1, mkList(_mkInstr(LDA, s->str), NULL));
+  l2 = append(l2, mkList(mkInstr(RDI, 0), NULL));
+  l1 = append(l1,l2);
+  return l1;
 }
 
-lista_Instr* compile_decl(decl* dl) {
+/*lista_Instr* compile_decl(decl* dl) {
   if (dl == 0) {
     yyerror("Null Decleration!!\n");
-    return;
+    return ;
   }
   printf("int ");
   print_lvar_d(dl->list);
 
   return;
-}
+}*/
 
 lista_Instr* compileCmd(Cmd* c){
+  lista_Instr* l1 = (lista_Instr*) malloc(sizeof(lista_Instr));
   switch(c->kind){
     case E_ATTR:
-    compile_attr(c->attr.a);
+    l1 = compile_attr(c->attr.a);
     break;
-    case E_DECL:
-    compile_decl(c->attr.d);
-    break;
+    /*case E_DECL:
+    l1 = compile_decl(c->attr.d);
+    break;*/
     case E_IF:
-    compile_se(c->attr.se);
+    l1 = compile_se(c->attr.se);
     break;
     case E_PRINT:
-    compile_print(c->attr.p);
+    l1 = compile_print(c->attr.p);
     break;
     case E_SCAN:
-    compile_print(c->attr.s);
+    l1 = compile_scan(c->attr.s);
     break;
     case E_CICLO:
-    compile_ciclo(c->attr.c);
+    l1 = compile_ciclo(c->attr.c);
     break;
     default: yyerror("Unknown command!\n");
   }
   printf("\n");
-  return;
+  return l1;
 }
 
 int main(int argc, char** argv) {
