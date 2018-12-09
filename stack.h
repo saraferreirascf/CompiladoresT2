@@ -16,6 +16,7 @@ typedef struct _li {
 
 
 Instr* mkInstr(IKind kind, int n);
+Instr* mkInstrc(IKind kind, char* c);
 Instr* head(lista_Instr* l1);
 lista_Instr* tail(lista_Instr* l1);
 lista_Instr* append(lista_Instr* l1, lista_Instr* l2);

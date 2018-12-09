@@ -92,9 +92,9 @@ atributo* ast_atrib(char* var, Expr* value){
   return node;
 }
 
-decl* ast_decl(lvar_d* list){
+decl* ast_decl(char* var){
   decl* node=(decl*) malloc(sizeof(decl));
-  node->list=list;
+  node->var=var;
 
   return node;
 }
@@ -125,18 +125,25 @@ se* ast_se_bb(BoolExpr* cond, lcmd* comandos, lcmd* ncomandos){
   return node;
 }
 
-print* ast_print(char* str, lvar_print* list){
+print* ast_print(char* str){
   print* node=(print*) malloc(sizeof(print));
-  node->str=strdup(str);
-  node->list=list;
+  node->cenas.str=str;
+
+  //node->list=list;
+
+  return node;
+}
+print* ast_printi(int num){
+  print* node=(print*) malloc(sizeof(print));
+  node->cenas.num=num;
 
   return node;
 }
 
-scan* ast_scan(char* str, lvar_print* list){
+scan* ast_scan(int valor, char* str){
   scan* node=(scan*) malloc(sizeof(scan));
-  node->str=strdup(str);
-  node->list=list;
+  node->str=str;
+  node->valor=valor;
 
   return node;
 }
@@ -160,31 +167,5 @@ lcmd* lista_comandos(Cmd* comando, lcmd* next){
   lcmd* node= (lcmd*) malloc (sizeof(lcmd));
   node->comando=comando;
   node->next=next;
-  return node;
-}
-
-lvar_d* ast_lvd_a(atributo* atr, lvar_d* next){
-  lvar_d* node=(lvar_d*) malloc(sizeof(lvar_d));
-  node->kind=ATRI;
-  node->attr.atri=atr;
-  node->next=next;
-
-  return node;
-}
-
-lvar_d* ast_lvd_v(char* str, lvar_d* next){
-  lvar_d* node=(lvar_d*) malloc(sizeof(lvar_d));
-  node->kind=VARI;
-  node->attr.var=strdup(str);
-  node->next=next;
-
-  return node;
-}
-
-lvar_print* ast_lvprint(char* str, lvar_print* next){
-  lvar_print* node=(lvar_print*) malloc(sizeof(lvar_print));
-  node->var=strdup(str);
-  node->next=next;
-
   return node;
 }

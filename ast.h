@@ -72,14 +72,18 @@ struct se {
 } ; //if
 struct scan{
   char* str;
-  struct _lvar_print* list;
+  int valor;
+  //struct _lvar_print* list;
 };
 struct print{
-  char* str;
-  struct _lvar_print* list;
+  union{
+    char* str;
+    int num;
+  } cenas;
+  //struct _lvar_print* list;
 } ;
 struct decl{
-  struct list_var_d* list;
+  char* var;
 } ;
 typedef struct atributo atributo;
 typedef struct ciclo ciclo;
@@ -95,37 +99,10 @@ struct _lcmd {
 } ;
 
 
-struct _lvar_print {
-  char* var;
-  struct _lvar_print* next;
-} ;
-
-struct list_var_d
-{
-  enum
-  {
-    ATRI,
-    VARI
-  } kind;
-  union
-  {
-    char* var;
-    atributo* atri;
-  } attr;
-  struct list_var_d* next;
-};
-typedef struct list_var_d lvar_d;
-
-
-
-
 typedef struct _Expr Expr; // Convenience typedef
 typedef struct _BoolExpr BoolExpr;
 typedef struct _Cmd Cmd;
 typedef struct _var var;
-typedef struct _lvar_print lvar_print;
-
-typedef struct _ldecl ldecl;
 typedef struct _lcmd lcmd;
 
 
@@ -146,20 +123,17 @@ Cmd* ast_c_ciclo(ciclo* c);
 
 //operações
 atributo* ast_atrib(char* var, Expr* value);
-decl* ast_decl(lvar_d* list);
+decl* ast_decl(char* var);
 se* ast_se_s(BoolExpr* cond, Cmd* comandos);
 se* ast_se_bs(BoolExpr* cond, lcmd* comandos, Cmd* ncomandos);
 se* ast_se_bb(BoolExpr* cond, lcmd* comandos, lcmd* ncomandos);
-print* ast_print(char* str, lvar_print* list);
-scan* ast_scan(char* str, lvar_print* list);
+print* ast_print(char* str);
+scan* ast_scan(int valor,char* str);
+print* ast_printi(int num);
+
 ciclo* ast_ciclo_s(BoolExpr* cond, Cmd* comando);
 ciclo* ast_ciclo_b(BoolExpr* cond, lcmd* list);
 
-//listas
 lcmd* lista_comandos(Cmd* comando, lcmd* next);
-lvar_d* ast_lvd_a(atributo* atr, lvar_d* next);
-lvar_d* ast_lvd_v(char* str, lvar_d* next);
-lvar_print* ast_lvprint(char* str, lvar_print* next);
-
 
 #endif

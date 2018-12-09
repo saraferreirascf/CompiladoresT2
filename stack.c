@@ -24,7 +24,7 @@ Instr* mkInstr(IKind kind, int n){
   return node;
 }
 
-Instr* _mkInstr(IKind kind, char* c){
+Instr* mkInstrc(IKind kind, char* c){
   Instr* node = (Instr*) malloc(sizeof(Instr));
   node->kind=kind;
   node->args.var=c;
@@ -57,71 +57,79 @@ void printInstr(Instr* inst){
   switch(inst->kind){
     case LDC:
     printf("LDC");
+    printf(" %d\n", inst->args.arg);
     break;
     case ADI:
-    printf("ADI");
+    printf("ADI\n");
     break;
     case SBI:
-    printf("SBI");
+    printf("SBI\n");
     break;
     case MPI:
-    printf("MPI");
+    printf("MPI\n");
     break;
     case MODP:
-    printf("MODP");
+    printf("MODP\n");
     break;
     case EQU:
-    printf("EQU");
+    printf("EQU\n");
     break;
     case DIF:
-    printf("DIF");
+    printf("DIF\n");
     break;
     case LES:
-    printf("LES");
+    printf("LES\n");
     break;
     case LEQ:
-    printf("LEQ");
+    printf("LEQ\n");
     break;
     case GEQ:
-    printf("GEQ");
+    printf("GEQ\n");
     break;
     case GRT:
-    printf("GRT");
+    printf("GRT\n");
     break;
     case STO:
-    printf("STO");
+    printf("STO\n");
     break;
     case FJP:
     printf("FJP");
+    printf(" %d\n", inst->args.arg);
     break;
     case UJP:
     printf("UJP");
+    printf(" %d\n", inst->args.arg);
     break;
     case WRI:
     printf("WRI");
+    //  printf("\nentreiii\n");
+    if(inst->args.var!=NULL)
+    printf(" %s \n", inst->args.var);
+    else
+    printf(" %d\n", inst->args.arg);
     break;
     case RDI:
     printf("RDI");
+    printf(" %s\n", inst->args.var);
     break;
     case LDA:
     printf("LDA");
+    printf(" %s \n", inst->args.var);
     break;
     case LOD:
     printf("LOD");
+    printf(" %d\n", inst->args.arg);
     break;
-
     default: printf("Não existe\n");
   }
-  printf(" %d\n", inst->args.arg);
 
 }
 
 void printListIntrs(lista_Instr* l1){
-  if(l1==NULL)
-  return;
-  else{
-    printInstr(head(l1));
-    printListIntrs(tail(l1));
+  printInstr(l1->head);
+  while(l1->tail !=NULL){
+    l1=l1->tail;
+    printInstr(l1->head);
   }
 }
 
@@ -192,7 +200,7 @@ lista_Instr* compileBool(BoolExpr* b){
 
 lista_Instr* compile_attr(atributo* a) {
   lista_Instr* l1 = NULL;
-  compileExpr(a->value);
+  l1=compileExpr(a->value);
   l1 = append(l1, mkList(mkInstr(STO, 0), NULL));
   return l1;
 }
@@ -200,12 +208,13 @@ lista_Instr* compile_attr(atributo* a) {
 lista_Instr* compile_se(se* se) {
   int label_temp = label;
   lista_Instr* l1 = NULL;
-  compileBool(se->cond);
-  l1 = append(l1, mkList(mkInstr(FJP, 1), NULL));
-  compile_lcmd(se->comandos);
-  l1 = append(l1, mkList(mkInstr(UJP, 2), NULL));
+  lista_Instr* l2= NULL;
+  l1=compileBool(se->cond);
+  l2 = append(l1, mkList(mkInstr(FJP, 1), NULL));
+  l1=compile_lcmd(se->comandos);
+  l2 = append(l1, mkList(mkInstr(UJP, 2), NULL));
   label_temp = 1;
-  compile_lcmd(se->ncomandos);
+  l1=compile_lcmd(se->ncomandos);
   label_temp+= 1;
   label+= 2;
 
@@ -217,9 +226,9 @@ lista_Instr* compile_lcmd(lcmd* l){
   lista_Instr* l1 = (lista_Instr*) malloc(sizeof(lista_Instr));
   l1 = compileCmd(l->comando);
 
-  while(l!=NULL){
-    l1 = append(l1, compileCmd(l->comando));
+  while(l->next!=NULL){
     l=l->next;
+    l1 = append(l1, compileCmd(l->comando));
   }
   return l1;
 }
@@ -227,44 +236,46 @@ lista_Instr* compile_lcmd(lcmd* l){
 lista_Instr* compile_ciclo(ciclo* c) {
   int label_temp = label;
   lista_Instr* l1 = NULL;
-  label_temp = 1;
-  compileBool(c->cond);
-  l1 = append(l1, mkList(mkInstr(FJP, 2), NULL));
+  lista_Instr* l2 = NULL;
+  //label_temp = 1;
+  l1=compileBool(c->cond);
+  l2 = append(l1, mkList(mkInstr(FJP, 2), NULL));
   compile_lcmd(c->list);
   l1 = append(l1, mkList(mkInstr(UJP, 1), NULL));
   label_temp+= 1;
   label+= 2;
+  return l2;
 }
 
 lista_Instr* compile_print(print* p) {
-  lista_Instr* l1 = (lista_Instr*) malloc(sizeof(lista_Instr));
-  lista_Instr* l2 = (lista_Instr*) malloc(sizeof(lista_Instr));
-  l1 = append(l1, mkList(_mkInstr(LOD, p->str), NULL));
-  l2 = append(l1, mkList(mkInstr(WRI, 0), NULL));
-  l1 = append(l1,l2);
 
-  return l1;
+  lista_Instr* l2 = (lista_Instr*) malloc(sizeof(lista_Instr));
+  if(p->cenas.str!=NULL)
+  l2= mkList(mkInstrc(WRI, p->cenas.str), NULL);
+  else
+  l2= mkList(mkInstr(WRI, p->cenas.num), NULL);
+
+
+  return l2;
 }
 
 lista_Instr* compile_scan(scan* s) {
-  lista_Instr* l1 = (lista_Instr*) malloc(sizeof(lista_Instr));
   lista_Instr* l2 = (lista_Instr*) malloc(sizeof(lista_Instr));
-  l1 = append(l1, mkList(_mkInstr(LDA, s->str), NULL));
-  l2 = append(l2, mkList(mkInstr(RDI, 0), NULL));
-  l1 = append(l1,l2);
-  return l1;
+  lista_Instr* l1 = (lista_Instr*) malloc(sizeof(lista_Instr));
+
+  l1= mkList(mkInstrc(RDI, s->str), NULL);
+  l2=append(l1,mkList(mkInstr(LDC,s->valor), NULL));
+
+  return l2;
 }
 
-/*lista_Instr* compile_decl(decl* dl) {
-  if (dl == 0) {
-    yyerror("Null Decleration!!\n");
-    return ;
-  }
-  printf("int ");
-  print_lvar_d(dl->list);
-
-  return;
-}*/
+lista_Instr* compile_decl(decl* dl) {
+  lista_Instr* l1 = NULL;
+  lista_Instr* l2 = NULL;
+  l1=mkList(mkInstrc(LDA,dl->var),NULL);
+  l2 = append(l1, mkList(mkInstr(STO, 0), NULL));
+  return l2;
+}
 
 lista_Instr* compileCmd(Cmd* c){
   lista_Instr* l1 = (lista_Instr*) malloc(sizeof(lista_Instr));
@@ -289,7 +300,7 @@ lista_Instr* compileCmd(Cmd* c){
     break;
     default: yyerror("Unknown command!\n");
   }
-  printf("\n");
+  //printf("\n");
   return l1;
 }
 
@@ -305,7 +316,7 @@ int main(int argc, char** argv) {
   if(yyparse()==0){
     lista_Instr* l=compile_lcmd(root);
     printListIntrs(l); //numa proxima fase este print vai gerar mips
-    //FAzer print do syscall
+    printf("SYSCALL\n");
 
   }
 

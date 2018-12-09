@@ -51,8 +51,6 @@ BoolExpr* boolValue;
 Cmd* commandValue;
 char* textValue;
 lcmd* lcmdValue;
-lvar_d* lvarValue;
-lvar_print* lvarprintValue;
 decl* declValue;
 atributo* atrValue;
 se* ifValue;
@@ -73,10 +71,8 @@ scan* scanValue;
 %type <cicloValue> ciclo;
 %type <printValue> print;
 %type <scanValue> scan;
-%type <lvarValue> l_var_decl;
 %type <textValue> VAR
 %type <textValue> STR
-%type <lvarprintValue> lvar;
 
 
 
@@ -202,29 +198,11 @@ $$= ast_c_scan($1);
 ;
 
 decl:
-INTEIRO l_var_decl{
+INTEIRO VAR{
 $$= ast_decl($2);
 }
 ;
 
-
-l_var_decl:
-VAR{
-$$ = ast_lvd_v($1, NULL);
-}
-|
-VAR VIRGULA l_var_decl{
-$$ = ast_lvd_v($1, $3);
-}
-|
-atr{
-$$ = ast_lvd_a($1, NULL);
-}
-|
-atr VIRGULA l_var_decl{
-$$ = ast_lvd_a($1, $3);
-}
-;
 
 atr:
 VAR IGUAL expr{
@@ -261,37 +239,20 @@ $$= ast_ciclo_b($3,$6);
 ;
 
 print:
-PRINTF PESQ STR VIRGULA lvar PDIR{
-$$=ast_print($3,$5);
+PRINTF PESQ VAR PDIR{
+$$=ast_print($3);
 }
 |
-PRINTF PESQ STR PDIR{
-$$=ast_print($3, NULL);
+PRINTF PESQ INT PDIR{
+$$=ast_printi($3);
 }
 ;
 
 scan:
-SCANF PESQ STR VIRGULA lvar PDIR{
+SCANF PESQ INT VIRGULA VAR PDIR{
 $$=ast_scan($3,$5);
-}
-|
-SCANF PESQ STR PDIR{
-$$=ast_scan($3,NULL);
 };
 
-
-lvar:
-VAR{
-$$=ast_lvprint($1,NULL);
-}
-|
-VAR VIRGULA lvar{
-$$=ast_lvprint($1,$3);
-}
-;
-
-
-;
 
 %%
 

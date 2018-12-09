@@ -1,20 +1,4 @@
--Alguns ficheiros passaram a ser os do trabalho1, só fizemos aqueles p testar.
-
--Compile_ciclo;
-
-label_temp=label;
-label_temp=1;
-compileBool
-FJP 2
-compile lcmd list
-UJP 1
-label_temp+=1;
-label+=2;
-
--Compile_print;
-percorrer a lista lvar_print para cada variavel mkinstr WRI (adicionar tbm WRI a printInstr)
--Compile_scan;
-SCAN igual ao print mas com RDI(adicionar tbm RDI ao printInstr)
--Compile cmd (switch com kind de comando e redireciona para as funções de cima);
--Testar para ver se ta a dar o p-code com o tester.c (nao dá p imprimir strings em p-code)
-P-CODE feitooooooooooooooooooo.
+-Ver pq q nao dá print(1);
+-Porque q decl n esta a dar;
+-Fazer LDA var, num atribuiçao.. exemplo:
+x=3 : LDC 3, LDA x, STO

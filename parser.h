@@ -40,7 +40,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 87 "parser.bison" /* yacc.c:1909  */
+#line 83 "parser.bison" /* yacc.c:1909  */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -109,8 +109,6 @@ BoolExpr* boolValue;
 Cmd* commandValue;
 char* textValue;
 lcmd* lcmdValue;
-lvar_d* lvarValue;
-lvar_print* lvarprintValue;
 decl* declValue;
 atributo* atrValue;
 se* ifValue;
@@ -118,7 +116,7 @@ ciclo* cicloValue;
 print* printValue;
 scan* scanValue;
 
-#line 122 "parser.h" /* yacc.c:1909  */
+#line 120 "parser.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

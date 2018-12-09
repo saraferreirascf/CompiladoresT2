@@ -14,10 +14,6 @@ int yyline = 1;
 #.*\n { yyline++; }
 \n { yyline++; }
 
-\"(\\.|[^\\"])*\" {
-yylval.textValue = strdup(yytext);
-return STR;
-}
 
 [0-9]+ {
 yylval.intValue = atoi(yytext);
