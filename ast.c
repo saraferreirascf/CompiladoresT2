@@ -12,6 +12,13 @@ Expr* ast_integer(int v) {
   return node;
 }
 
+Expr* ast_var(char* var) {
+  Expr* node = (Expr*) malloc(sizeof(Expr));
+  node->kind = E_VAR;
+  node->attr.var = var;
+  return node;
+}
+
 Expr* ast_operation(int operator, Expr* left, Expr* right) {
   Expr* node = (Expr*) malloc(sizeof(Expr));
   node->kind = E_OPERATION;
@@ -85,11 +92,10 @@ Cmd* ast_c_print(print* p){
 }
 
 
-atributo* ast_atrib(char* var, Expr* value, char* _var){
+atributo* ast_atrib(char* var, Expr* value){
   atributo* node=(atributo*) malloc(sizeof(atributo));
   node->var=strdup(var);
   node->value=value;
-  node->_var=strdup(_var);
   return node;
 }
 

@@ -90,7 +90,8 @@ void printInstr(Instr* inst){
     printf("GRT\n");
     break;
     case STO:
-    printf("STO\n");
+    printf("STO");
+    printf(" %s \n", inst->args.var);
     break;
     case FJP:
     printf("FJP");
@@ -140,10 +141,12 @@ void printListIntrs(lista_Instr* l1){
 
 lista_Instr* compileExpr(Expr* e){
   lista_Instr* l1 = (lista_Instr*) malloc(sizeof(lista_Instr));
-
   switch(e->kind){
     case E_INTEGER:
     l1 = mkList(mkInstr(LDC,e->attr.value), NULL);
+    break;
+    case E_VAR:
+    l1 = mkList(mkInstrc(LOD,e->attr.var), NULL);
     break;
     case E_OPERATION:
     l1 = compileExpr(e->attr.op.left);
@@ -175,6 +178,9 @@ lista_Instr* compileBool(BoolExpr* b){
     case E_INTEGER:
     l1 = mkList(mkInstr(LDC,b->attr.value), NULL);
     break;
+    case E_VAR:
+    l1 = mkList(mkInstrc(LOD,b->attr.var), NULL);
+    break;
     case E_OPERATION:
     l1 = compileExpr(b->attr.comp.left);
     l1 = append(l1, compileExpr(b->attr.comp.right));
@@ -204,14 +210,9 @@ lista_Instr* compileBool(BoolExpr* b){
 
 lista_Instr* compile_attr(atributo* a) {
   lista_Instr* l1 = NULL;
-  if (a->value != NULL) {
   l1=compileExpr(a->value);
-  }
-  else {
-    l1 = append(l1, mkList(mkInstrc(LOD, a->_var), NULL));
-  }
-  l1 = append(l1, mkList(mkInstrc(LOD, a->var), NULL));
-  l1 = append(l1, mkList(mkInstr(STO, 0), NULL));
+  l1 = append(l1, mkList(mkInstrc(STO, a->var), NULL));
+
   return l1;
 }
 
@@ -234,7 +235,7 @@ lista_Instr* compile_ciclo(ciclo* c) {
   int label_temp = label;
 
   lista_Instr* l1 = NULL;
-    l1 = append(l1, mkList(mkInstr(LABEL, label_temp), NULL));
+  l1 = append(l1, mkList(mkInstr(LABEL, label_temp), NULL));
   l1=compileBool(c->cond);
   l1 = append(l1, mkList(mkInstr(FJP, label_temp+1), NULL));
   l1=append(l1,compile_lcmd(c->list));
@@ -261,10 +262,10 @@ lista_Instr* compile_lcmd(lcmd* l){
 lista_Instr* compile_print(print* p) {
   lista_Instr* l2 = (lista_Instr*) malloc(sizeof(lista_Instr));
   if(p->cenas.str!=NULL) {
-  l2= mkList(mkInstrc(WRI, p->cenas.str), NULL);
+    l2= mkList(mkInstrc(WRI, p->cenas.str), NULL);
   }
   else {
-  l2= mkList(mkInstr(WRI, p->cenas.num), NULL);  
+    l2= mkList(mkInstr(WRI, p->cenas.num), NULL);
   }
   return l2;
 }
@@ -274,7 +275,7 @@ lista_Instr* compile_scan(scan* s) {
   lista_Instr* l1 = (lista_Instr*) malloc(sizeof(lista_Instr));
 
   l1= mkList(mkInstrc(RDI, s->str), NULL);
-  l2=append(l1,mkList(mkInstrc(LOD,s->str), NULL));
+  l2=append(l1,mkList(mkInstrc(STO,s->str), NULL));
 
   return l2;
 }
@@ -282,10 +283,10 @@ lista_Instr* compile_scan(scan* s) {
 lista_Instr* compile_decl(decl* dl) {
   lista_Instr* l1 = NULL;
   if (dl->value != NULL) {
-  l1 = compileExpr(dl->value);
+    l1 = compileExpr(dl->value);
   }
-  l1 = append(l1, mkList(mkInstrc(LOD, dl->var), NULL));
-  l1 = append(l1, mkList(mkInstr(STO, 0), NULL));
+  l1 = append(l1, mkList(mkInstrc(STO, dl->var), NULL));
+  //l1 = append(l1, mkList(mkInstr(STO, 0), NULL));
   return l1;
 }
 

@@ -102,6 +102,10 @@ INT {
 $$ = ast_integer($1);
 }
 |
+VAR {
+$$=ast_var($1);
+}
+|
 expr PLUS expr {
 $$ = ast_operation(PLUS, $1, $3);
 }
@@ -210,11 +214,7 @@ $$= ast_decl($2,$4);
 
 atr:
 VAR IGUAL expr{
-$$=ast_atrib($1,$3,NULL);
-}
-|
-VAR IGUAL VAR {
-$$=ast_atrib($1,NULL,$3);
+$$=ast_atrib($1,$3);
 }
 ;
 

@@ -1,13 +1,15 @@
 int main()
 {
   int a;
-  x=b;
-  printf(x);
+  a=1;
+  a=a+b;
   scanf(x);
-  if(1==2){
+  if(a==b){
     x=2;
   }
   else
+  x=3;
+  printf(x);
   while(3==4)
   x=1;
   return;

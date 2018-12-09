@@ -7,7 +7,8 @@
 struct _Expr {
   enum {
     E_INTEGER,
-    E_OPERATION
+    E_OPERATION,
+    E_VAR
   } kind;
   union {
     int value; // for integer values
@@ -27,6 +28,7 @@ struct _BoolExpr{
   } kind;
   union {
     int value; // for integer values
+    char* var;
     struct {
       int operator; // PLUS, MINUS, etc
       struct _Expr* left;
@@ -111,6 +113,7 @@ typedef struct _lcmd lcmd;
 
 // Constructor functions (see implementation in ast.c)
 Expr* ast_integer(int v);
+Expr* ast_var(char* var);
 Expr* ast_operation(int operator, Expr* left, Expr* right);
 BoolExpr* ast_boolean(int v);
 BoolExpr* ast_booleanop( int operator,Expr* left, Expr* right);
@@ -124,7 +127,7 @@ Cmd* ast_c_scan(scan* s);
 Cmd* ast_c_ciclo(ciclo* c);
 
 //operações
-atributo* ast_atrib(char* var, Expr* value, char* _var);
+atributo* ast_atrib(char* var, Expr* value);
 decl* ast_decl(char* var, Expr* value);
 se* ast_se_s(BoolExpr* cond, Cmd* comandos);
 se* ast_se_bs(BoolExpr* cond, lcmd* comandos, Cmd* ncomandos);
