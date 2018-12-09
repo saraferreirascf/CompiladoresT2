@@ -226,9 +226,12 @@ lista_Instr* compile_se(se* se) {
   l1=append(l1,compile_lcmd(se->comandos));
   l1 = append(l1, mkList(mkInstr(UJP, label_temp+1), NULL));
   l1 = append(l1, mkList(mkInstr(LABEL, label_temp), NULL));
+  label++;
+  if (se->ncomandos != NULL) {
   l1=append(l1,compile_lcmd(se->ncomandos));
   l1 = append(l1, mkList(mkInstr(LABEL, label_temp+1), NULL));
-  label+= 2;
+  label++;
+  }
 
   return l1;
 }
