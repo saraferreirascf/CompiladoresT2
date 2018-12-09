@@ -70,6 +70,7 @@ void printInstr(Instr* inst){
     break;
     case DVI:
     printf("DVI\n");
+    break;
     case MODP:
     printf("MODP\n");
     break;
