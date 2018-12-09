@@ -228,14 +228,17 @@ lista_Instr* compile_se(se* se) {
 
 lista_Instr* compile_ciclo(ciclo* c) {
   int label_temp = label;
+
   lista_Instr* l1 = NULL;
-  label_temp = 1;
+    l1 = append(l1, mkList(mkInstr(LABEL, label_temp), NULL));
   l1=compileBool(c->cond);
-  l1 = append(l1, mkList(mkInstr(FJP, 2), NULL));
-  compile_lcmd(c->list);
-  l1 = append(l1, mkList(mkInstr(UJP, 1), NULL));
-  label_temp+= 1;
+  l1 = append(l1, mkList(mkInstr(FJP, label_temp+1), NULL));
+  l1=append(l1,compile_lcmd(c->list));
+  l1 = append(l1, mkList(mkInstr(UJP, label_temp), NULL));
+  l1 = append(l1, mkList(mkInstr(LABEL, label_temp+1), NULL));
+
   label+= 2;
+
   return l1;
 }
 
