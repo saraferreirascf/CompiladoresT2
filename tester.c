@@ -1,8 +1,8 @@
 int main()
 {
   int a;
-  a=1;
-  a=a+b;
+  a=b+1;
+  a=1+b;
   scanf(x);
   if(a==b){
     x=2;
