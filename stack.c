@@ -68,14 +68,16 @@ void printInstr(Instr* inst){
     case MPI:
     printf("MPI\n");
     break;
+    case DVI:
+    printf("DVI\n");
     case MODP:
     printf("MODP\n");
     break;
     case EQU:
     printf("EQU\n");
     break;
-    case DIF:
-    printf("DIF\n");
+    case NEQ:
+    printf("NEQ\n");
     break;
     case LES:
     printf("LES\n");
@@ -189,7 +191,7 @@ lista_Instr* compileBool(BoolExpr* b){
       l1 = append(l1, mkList(mkInstr(EQU, 0), NULL));
       break;
       case DIFF:
-      l1 = append(l1, mkList(mkInstr(DIF, 0), NULL));
+      l1 = append(l1, mkList(mkInstr(NEQ, 0), NULL));
       break;
       case LESS:
       l1 = append(l1, mkList(mkInstr(LES, 0), NULL));
