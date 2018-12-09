@@ -249,8 +249,8 @@ $$=ast_printi($3);
 ;
 
 scan:
-SCANF PESQ INT VIRGULA VAR PDIR{
-$$=ast_scan($3,$5);
+SCANF PESQ VAR PDIR{
+$$=ast_scan($3);
 };
 
 

@@ -72,7 +72,6 @@ struct se {
 } ; //if
 struct scan{
   char* str;
-  int valor;
   //struct _lvar_print* list;
 };
 struct print{
@@ -128,7 +127,7 @@ se* ast_se_s(BoolExpr* cond, Cmd* comandos);
 se* ast_se_bs(BoolExpr* cond, lcmd* comandos, Cmd* ncomandos);
 se* ast_se_bb(BoolExpr* cond, lcmd* comandos, lcmd* ncomandos);
 print* ast_print(char* str);
-scan* ast_scan(int valor,char* str);
+scan* ast_scan(char* str);
 print* ast_printi(int num);
 
 ciclo* ast_ciclo_s(BoolExpr* cond, Cmd* comando);

@@ -56,7 +56,7 @@ lista_Instr* append(lista_Instr* l1, lista_Instr* l2){
 void printInstr(Instr* inst){
   switch(inst->kind){
     case LDC:
-    printf("LDC");
+    printf("LDC"); //load constant
     printf(" %d\n", inst->args.arg);
     break;
     case ADI:
@@ -117,7 +117,11 @@ void printInstr(Instr* inst){
     printf(" %s \n", inst->args.var);
     break;
     case LOD:
-    printf("LOD");
+    printf("LOD"); //load variable
+    printf(" %s\n", inst->args.var);
+    break;
+    case LABEL:
+    printf("LABEL");
     printf(" %d\n", inst->args.arg);
     break;
     default: printf("Não existe\n");
@@ -201,23 +205,37 @@ lista_Instr* compileBool(BoolExpr* b){
 lista_Instr* compile_attr(atributo* a) {
   lista_Instr* l1 = NULL;
   l1=compileExpr(a->value);
+  l1 = append(l1, mkList(mkInstrc(LOD, a->var), NULL));
   l1 = append(l1, mkList(mkInstr(STO, 0), NULL));
+
   return l1;
 }
 
 lista_Instr* compile_se(se* se) {
   int label_temp = label;
   lista_Instr* l1 = NULL;
-  lista_Instr* l2= NULL;
   l1=compileBool(se->cond);
-  l2 = append(l1, mkList(mkInstr(FJP, 1), NULL));
-  l1=compile_lcmd(se->comandos);
-  l2 = append(l1, mkList(mkInstr(UJP, 2), NULL));
-  label_temp = 1;
-  l1=compile_lcmd(se->ncomandos);
-  label_temp+= 1;
+  l1 = append(l1, mkList(mkInstr(FJP, label_temp), NULL));
+  l1=append(l1,compile_lcmd(se->comandos));
+  l1 = append(l1, mkList(mkInstr(UJP, label_temp+1), NULL));
+  l1 = append(l1, mkList(mkInstr(LABEL, label_temp), NULL));
+  l1=append(l1,compile_lcmd(se->ncomandos));
+  l1 = append(l1, mkList(mkInstr(LABEL, label_temp+1), NULL));
   label+= 2;
 
+  return l1;
+}
+
+lista_Instr* compile_ciclo(ciclo* c) {
+  int label_temp = label;
+  lista_Instr* l1 = NULL;
+  label_temp = 1;
+  l1=compileBool(c->cond);
+  l1 = append(l1, mkList(mkInstr(FJP, 2), NULL));
+  compile_lcmd(c->list);
+  l1 = append(l1, mkList(mkInstr(UJP, 1), NULL));
+  label_temp+= 1;
+  label+= 2;
   return l1;
 }
 
@@ -231,20 +249,6 @@ lista_Instr* compile_lcmd(lcmd* l){
     l1 = append(l1, compileCmd(l->comando));
   }
   return l1;
-}
-
-lista_Instr* compile_ciclo(ciclo* c) {
-  int label_temp = label;
-  lista_Instr* l1 = NULL;
-  lista_Instr* l2 = NULL;
-  //label_temp = 1;
-  l1=compileBool(c->cond);
-  l2 = append(l1, mkList(mkInstr(FJP, 2), NULL));
-  compile_lcmd(c->list);
-  l1 = append(l1, mkList(mkInstr(UJP, 1), NULL));
-  label_temp+= 1;
-  label+= 2;
-  return l2;
 }
 
 lista_Instr* compile_print(print* p) {
@@ -264,7 +268,7 @@ lista_Instr* compile_scan(scan* s) {
   lista_Instr* l1 = (lista_Instr*) malloc(sizeof(lista_Instr));
 
   l1= mkList(mkInstrc(RDI, s->str), NULL);
-  l2=append(l1,mkList(mkInstr(LDC,s->valor), NULL));
+  l2=append(l1,mkList(mkInstrc(LOD,s->str), NULL));
 
   return l2;
 }
@@ -272,7 +276,7 @@ lista_Instr* compile_scan(scan* s) {
 lista_Instr* compile_decl(decl* dl) {
   lista_Instr* l1 = NULL;
   lista_Instr* l2 = NULL;
-  l1=mkList(mkInstrc(LDA,dl->var),NULL);
+  l1=mkList(mkInstrc(LOD,dl->var),NULL);
   l2 = append(l1, mkList(mkInstr(STO, 0), NULL));
   return l2;
 }

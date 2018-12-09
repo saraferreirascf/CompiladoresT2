@@ -140,10 +140,9 @@ print* ast_printi(int num){
   return node;
 }
 
-scan* ast_scan(int valor, char* str){
+scan* ast_scan(char* str){
   scan* node=(scan*) malloc(sizeof(scan));
   node->str=str;
-  node->valor=valor;
 
   return node;
 }
