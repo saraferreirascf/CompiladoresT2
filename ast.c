@@ -85,17 +85,18 @@ Cmd* ast_c_print(print* p){
 }
 
 
-atributo* ast_atrib(char* var, Expr* value){
+atributo* ast_atrib(char* var, Expr* value, char* _var){
   atributo* node=(atributo*) malloc(sizeof(atributo));
   node->var=strdup(var);
   node->value=value;
+  node->_var=strdup(_var);
   return node;
 }
 
-decl* ast_decl(char* var){
+decl* ast_decl(char* var, Expr* value){
   decl* node=(decl*) malloc(sizeof(decl));
   node->var=var;
-
+  node->value=value;
   return node;
 }
 

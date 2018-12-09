@@ -1,4 +1,3 @@
 -Ver pq q nao dá print(1);
--int x nao faz nada; (decl);
 -a=b =>STO b, LOD a
 -x=2 em vez do q esta é LDC 2, STO X 

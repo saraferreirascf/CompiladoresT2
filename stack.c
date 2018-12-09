@@ -204,10 +204,14 @@ lista_Instr* compileBool(BoolExpr* b){
 
 lista_Instr* compile_attr(atributo* a) {
   lista_Instr* l1 = NULL;
+  if (a->value != NULL) {
   l1=compileExpr(a->value);
+  }
+  else {
+    l1 = append(l1, mkList(mkInstrc(LOD, a->_var), NULL));
+  }
   l1 = append(l1, mkList(mkInstrc(LOD, a->var), NULL));
   l1 = append(l1, mkList(mkInstr(STO, 0), NULL));
-
   return l1;
 }
 
@@ -255,14 +259,13 @@ lista_Instr* compile_lcmd(lcmd* l){
 }
 
 lista_Instr* compile_print(print* p) {
-
   lista_Instr* l2 = (lista_Instr*) malloc(sizeof(lista_Instr));
-  if(p->cenas.str!=NULL)
+  if(p->cenas.str!=NULL) {
   l2= mkList(mkInstrc(WRI, p->cenas.str), NULL);
-  else
-  l2= mkList(mkInstr(WRI, p->cenas.num), NULL);
-
-
+  }
+  else {
+  l2= mkList(mkInstr(WRI, p->cenas.num), NULL);  
+  }
   return l2;
 }
 
@@ -278,10 +281,12 @@ lista_Instr* compile_scan(scan* s) {
 
 lista_Instr* compile_decl(decl* dl) {
   lista_Instr* l1 = NULL;
-  lista_Instr* l2 = NULL;
-  l1=mkList(mkInstrc(LOD,dl->var),NULL);
-  l2 = append(l1, mkList(mkInstr(STO, 0), NULL));
-  return l2;
+  if (dl->value != NULL) {
+  l1 = compileExpr(dl->value);
+  }
+  l1 = append(l1, mkList(mkInstrc(LOD, dl->var), NULL));
+  l1 = append(l1, mkList(mkInstr(STO, 0), NULL));
+  return l1;
 }
 
 lista_Instr* compileCmd(Cmd* c){
@@ -290,9 +295,9 @@ lista_Instr* compileCmd(Cmd* c){
     case E_ATTR:
     l1 = compile_attr(c->attr.a);
     break;
-    /*case E_DECL:
+    case E_DECL:
     l1 = compile_decl(c->attr.d);
-    break;*/
+    break;
     case E_IF:
     l1 = compile_se(c->attr.se);
     break;

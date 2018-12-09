@@ -199,14 +199,22 @@ $$= ast_c_scan($1);
 
 decl:
 INTEIRO VAR{
-$$= ast_decl($2);
+$$= ast_decl($2,NULL);
+}
+|
+INTEIRO VAR IGUAL expr {
+$$= ast_decl($2,$4);
 }
 ;
 
 
 atr:
 VAR IGUAL expr{
-$$=ast_atrib($1,$3);
+$$=ast_atrib($1,$3,NULL);
+}
+|
+VAR IGUAL VAR {
+$$=ast_atrib($1,NULL,$3);
 }
 ;
 

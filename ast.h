@@ -11,6 +11,7 @@ struct _Expr {
   } kind;
   union {
     int value; // for integer values
+    char* var;
     struct {
       int operator; // PLUS, MINUS, etc
       struct _Expr* left;
@@ -59,6 +60,7 @@ struct _Cmd{
 
 struct atributo{
   char* var;
+  char* _var;
   struct _Expr* value;
 }; // para atribuições
 struct ciclo{
@@ -83,6 +85,7 @@ struct print{
 } ;
 struct decl{
   char* var;
+  struct _Expr* value;
 } ;
 typedef struct atributo atributo;
 typedef struct ciclo ciclo;
@@ -121,8 +124,8 @@ Cmd* ast_c_scan(scan* s);
 Cmd* ast_c_ciclo(ciclo* c);
 
 //operações
-atributo* ast_atrib(char* var, Expr* value);
-decl* ast_decl(char* var);
+atributo* ast_atrib(char* var, Expr* value, char* _var);
+decl* ast_decl(char* var, Expr* value);
 se* ast_se_s(BoolExpr* cond, Cmd* comandos);
 se* ast_se_bs(BoolExpr* cond, lcmd* comandos, Cmd* ncomandos);
 se* ast_se_bb(BoolExpr* cond, lcmd* comandos, lcmd* ncomandos);
