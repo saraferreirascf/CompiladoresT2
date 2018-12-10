@@ -246,7 +246,7 @@ lista_Instr* compile_ciclo(ciclo* c) {
   l1 = append(l1, mkList(mkInstr(FJP, label_temp+1), NULL));
   l1=append(l1,compile_lcmd(c->list));
   l1 = append(l1, mkList(mkInstr(UJP, label_temp), NULL));
-  l1 = append(l1, mkList(mkInstr(LABEL, label_temp+1), NULL));
+  l1 = append(l1, mkList(mkInstr(LABEL, label_temp), NULL));
 
   label+= 2;
 
